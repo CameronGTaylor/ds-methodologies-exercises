@@ -13,26 +13,24 @@ def split_my_data(X, y, train_pct):
     return X_train, X_test, y_train, y_test
 
 def standard_scaler(train, test):
-    scaler = skl.StandardScaler()
-    scaler.fit(train)
+    scaler = skl.StandardScaler().fit(train)
+    
     train_scaled = pd.DataFrame(scaler.transform(train), 
                     columns=train.columns, index=train.index)
     
-    scaler.fit(test)
     test_scaled = pd.DataFrame(scaler.transform(test), 
                     columns=test.columns, index=test.index)
     
     return scaler, train_scaled, test_scaled
 
-def scale_inverse(train, test):
-    scaler, train_scaled, test_scaled = standard_scaler(train, test)
+def scale_inverse(scaler, train_scaled, test_scaled):
     train = pd.DataFrame(scaler.inverse_transform(train_scaled),
         columns = train_scaled.columns, index = train_scaled.index)
     
     test = pd.DataFrame(scaler.inverse_transform(test_scaled),
         columns = test_scaled.columns, index = test_scaled.index)
     
-    return scaler, train, test
+    return train, test
 
 def uniform_scaler(train, test):
     scaler = skl.QuantileTransformer(n_quantiles=100,
@@ -41,7 +39,6 @@ def uniform_scaler(train, test):
     train_scaled = pd.DataFrame(scaler.transform(train), 
                     columns=train.columns, index=train.index)
     
-    scaler.fit(test)
     test_scaled = pd.DataFrame(scaler.transform(test), 
                     columns=test.columns, index=test.index)
     
@@ -54,7 +51,6 @@ def gaussian_scaler(train, test):
     train_scaled = pd.DataFrame(scaler.transform(train), 
                     columns=train.columns, index=train.index)
     
-    scaler.fit(test)
     test_scaled = pd.DataFrame(scaler.transform(test), 
                     columns=test.columns, index=test.index)
     
@@ -67,7 +63,6 @@ def min_max_scaler(train, test):
     train_scaled = pd.DataFrame(scaler.transform(train), 
                     columns=train.columns, index=train.index)
     
-    scaler.fit(test)
     test_scaled = pd.DataFrame(scaler.transform(test), 
                     columns=test.columns, index=test.index)
     
@@ -80,7 +75,6 @@ def iqr_robust_scaler(train, test):
     train_scaled = pd.DataFrame(scaler.transform(train), 
                     columns=train.columns, index=train.index)
     
-    scaler.fit(test)
     test_scaled = pd.DataFrame(scaler.transform(test), 
                     columns=test.columns, index=test.index)
     
