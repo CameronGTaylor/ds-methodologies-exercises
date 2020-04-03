@@ -6,7 +6,13 @@ import matplotlib.pyplot as plt
 
 import wrangle
 
-def split_my_data(X, y, train_pct):
+def split_my_data(df, train_pct):
+    train, test = (
+        train_test_split(df, train_size=train_pct,
+            random_state=123))
+    return train, test
+
+def split_my_data_twice(X, y, train_pct):
     X_train, X_test, y_train, y_test = (
         train_test_split(X, y, train_size = train_pct,
                              random_state=42))
