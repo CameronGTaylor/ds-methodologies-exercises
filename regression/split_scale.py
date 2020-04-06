@@ -9,7 +9,7 @@ import wrangle
 def split_my_data(df, train_pct):
     train, test = (
         train_test_split(df, train_size=train_pct,
-            random_state=123))
+            random_state=42))
     return train, test
 
 def split_my_data_twice(X, y, train_pct):
