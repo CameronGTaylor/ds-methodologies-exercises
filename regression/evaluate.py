@@ -17,26 +17,30 @@ def plot_residuals(y, yhat):
     plt.show()
 
 def regression_errors(y, yhat):
-    MSE = mse(y, yhat)
-    SSE = mse(y, yhat) * len(y)
-    ESS = sum((yhat - y.mean())**2)
-    TSS = sum((y - y.mean())**2)
-    RMSE = sqrt(mse(y, yhat))
+    return {
+        'ESS' : sum((yhat - y.mean())**2),
+        'TSS' : sum((y - y.mean())**2),
+        'MSE' : mse(y, yhat),
+        'SSE' : mse(y, yhat) * len(y),
+        'RMSE' : sqrt(mse(y, yhat)),
+    }
     # print(f'SSE: {SSE}\nESS: {ESS}\nTSS: {TSS}\nMSE: {MSE}\nRMSE: {RMSE}')
-    return TSS, ESS, SSE, MSE, RMSE
+    # return TSS, ESS, SSE, MSE, RMSE
 
 def baseline_mean_errors(y):
     df_ = pd.DataFrame(index=y, columns=['n'])
     df_ = df_.fillna(y.mean())
-    MSE = mse(y, df_)
-    SSE = mse(y, df_ * len(y))
-    RMSE = sqrt(mse(y, df_))
+    return {
+        'MSE' : mse(y, df_),
+        'SSE' : mse(y, df_ * len(y)),
+        'RMSE' : sqrt(mse(y, df_)),
+    }
     # print(f'SSE: {SSE}\nMSE: {MSE}\nRMSE: {RMSE}')
-    return SSE, MSE, RMSE
+    # return SSE, MSE, RMSE
 
 def better_than_baseline(y, yhat):
-    MSE1 = regression_errors(y, yhat)[3]
-    MSE2 = baseline_mean_errors(y)[1]
+    MSE1 = regression_errors(y, yhat).get('MSE')
+    MSE2 = baseline_mean_errors(y).get('MSE')
     if MSE1 < MSE2:
         print(f'True: {(MSE2 - MSE1):.2f} is greater than 0')
     else:
