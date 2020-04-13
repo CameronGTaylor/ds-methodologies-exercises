@@ -4,7 +4,6 @@ import sklearn.preprocessing as skl
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
-import wrangle
 
 def split_my_data(df, train_pct):
     train, test = (
