@@ -44,7 +44,7 @@ def null_cols_info(df):
     return df2
 
 def handle_missing_values(df, req_column = .7, req_row = .6):
-    single_unit = [261, 262, 263, 264, 268, 273, 276, 279]
+    single_unit = [261]
     df = df[df.propertylandusetypeid.isin(single_unit)] 
 
     threshold = int(round(req_column*len(df),0))
@@ -52,47 +52,43 @@ def handle_missing_values(df, req_column = .7, req_row = .6):
     
     threshold = int(round(req_row*len(df.columns),0))
     df.dropna(axis=0, thresh=threshold, inplace=True)
+
+    df=df.drop(columns=['calculatedbathnbr','finishedsquarefeet12',
+                   'fullbathcnt','propertylandusetypeid',
+                    'propertylandusedesc','assessmentyear',
+                    'transactiondate','taxvaluedollarcnt',
+                    'censustractandblock'])
     return df
 
 def extra_clean(df):
-    na_cols = df[['parcelid','calculatedbathnbr', 
-       'calculatedfinishedsquarefeet',
-       'finishedsquarefeet12', 'fullbathcnt', 'lotsizesquarefeet',
-       'regionidcity', 'regionidzip', 'yearbuilt',
-       'structuretaxvaluedollarcnt', 'taxvaluedollarcnt',
-       'landtaxvaluedollarcnt', 'taxamount', 'censustractandblock']]
-    na_cols = pd.DataFrame(KNNImputer().fit_transform(na_cols))
-    na_cols.columns = ['parcelid','calculatedbathnbr', 
-       'calculatedfinishedsquarefeet',
-       'finishedsquarefeet12', 'fullbathcnt', 'lotsizesquarefeet',
-       'regionidcity', 'regionidzip', 'yearbuilt',
-       'structuretaxvaluedollarcnt', 'taxvaluedollarcnt',
-       'landtaxvaluedollarcnt', 'taxamount', 'censustractandblock']
-    int_cols = ['parcelid', 'calculatedfinishedsquarefeet',
-        'finishedsquarefeet12','fullbathcnt','lotsizesquarefeet',
-        'regionidcity','regionidzip', 'yearbuilt',
-        'censustractandblock']
-    na_cols[int_cols] = na_cols[int_cols].astype(int)
-    df = na_cols.merge(df, on='parcelid', copy=False)
-    df = df.drop(columns=df.isna().sum()[df.isna().sum()>0]\
-        .index.tolist())
-    df.drop(columns=['calculatedbathnbr_x', 'propertylandusetypeid',
-                 'finishedsquarefeet12_x'], inplace=True)
-    df.set_index('parcelid', inplace=True)
     #Drop outliers
-    df.drop([11059773], inplace=True)
-    df.drop([167655959,167687839,167689317], inplace=True)
-    df.drop(df.calculatedfinishedsquarefeet_x.nlargest(3)\
-            .index.tolist(), inplace=True)
-    df.drop(df.structuretaxvaluedollarcnt_x.nlargest(5).index.tolist(), 
+    df.drop(df.bathroomcnt.nlargest(1).index.tolist(), 
     inplace=True)
-    df.drop(df.landtaxvaluedollarcnt_x.nlargest(3).index.tolist(), 
+    df.drop(df.calculatedfinishedsquarefeet.nlargest(3).index.tolist(), 
     inplace=True)
-    df.drop(df.censustractandblock_x.nlargest(2).index.tolist(), 
+    df.drop(df.structuretaxvaluedollarcnt.nlargest(1).index.tolist(), 
     inplace=True)
-    df.drop(df.regionidzip_x.nlargest(12).index.tolist(), 
+    df.drop(df.landtaxvaluedollarcnt.nlargest(4).index.tolist(), 
     inplace=True)
-    df.drop(df.lotsizesquarefeet_x.nlargest(13).index.tolist(), 
+    df.drop(df.censustractandblock.nlargest(1).index.tolist(), 
+    inplace=True)
+    df.drop(df.regionidzip.nlargest(12).index.tolist(), 
+    inplace=True)
+    df.drop(df.lotsizesquarefeet.nlargest(13).index.tolist(), 
     inplace=True)
 
+    #Impute nulls with median
+    df.calculatedfinishedsquarefeet.fillna(
+        df.calculatedfinishedsquarefeet.median(), inplace=True)
+    df.lotsizesquarefeet.fillna(df.lotsizesquarefeet.median(),
+                            inplace=True)
+    df.regionidcity.fillna(df.regionidcity.median(), inplace=True)
+    df.regionidzip.fillna(df.regionidzip.median(), inplace=True)
+    df.yearbuilt.fillna(df.yearbuilt.median(), inplace=True)
+    df.structuretaxvaluedollarcnt.fillna(
+        df.structuretaxvaluedollarcnt.median(), inplace=True)
+    df.censustractandblock.fillna(
+        df.censustractandblock.median(), inplace=True)
+    df.set_index('parcelid', inplace=True)
+    df.dropna(inplace=True)
     return df
