@@ -69,3 +69,7 @@ def get_power_data():
     df = pd.read_csv('https://raw.githubusercontent.com/jenfly/\
 opsd/master/opsd_germany_daily.csv')
     return df
+
+def get_clean_data():
+    df = pd.read_csv('clean_data.csv', index_col='sale_date', parse_dates=True)
+    return df

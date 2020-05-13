@@ -15,6 +15,7 @@ def plot_sales_vs_amount(df):
 
 def set_index(df):
     df.set_index('sale_date', inplace=True)
+    df.to_csv('clean_data.csv')
     return df
 
 def add_columns(df):
